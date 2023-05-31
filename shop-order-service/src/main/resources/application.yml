@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8091
 spring:
   application:
     name: order-service
@@ -14,3 +14,10 @@ spring:
         hbm2ddl:
           auto: update
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+product-service: #调用的提供者的名称
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
