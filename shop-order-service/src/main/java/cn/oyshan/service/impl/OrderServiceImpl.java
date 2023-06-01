@@ -3,13 +3,12 @@ package cn.oyshan.service.impl;
 import cn.oyshan.dao.OrderDao;
 import cn.oyshan.domain.Order;
 import cn.oyshan.domain.Product;
+import cn.oyshan.feign.ProductFeignApi;
 import cn.oyshan.service.IOrderService;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * @description: TODO
@@ -23,16 +22,11 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private OrderDao orderDao;
     @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
-    private DiscoveryClient discoveryClient;
-    int i=0;
+    private ProductFeignApi productFeignApi;
     @Override
     public Order createOrder(Long productId, Long userId) {
         log.info("接收到{}号商品的下单请求，接下来调用商品微服务查询此商品信息",productId);
-        String url = "http://product-service/product/"+productId;
-        log.info("服务的地址{}",url);
-        Product product =restTemplate.getForObject(url,Product.class);
+        Product product =productFeignApi.findByPid(productId);
         log.info("查询到{}号商品的信息，内容是：{}",productId, JSON.toJSONString(product));
         Order order = new Order();
         order.setUid(userId);
